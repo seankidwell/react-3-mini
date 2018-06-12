@@ -26,28 +26,45 @@ class App extends Component {
     this.resetData = this.resetData.bind(this);
     this.byYear = this.byYear.bind(this);
     this.deleteBuyer = this.deleteBuyer.bind(this);
+
+    this.baseUrl = `http://joes-autos.herokuapp.com/api`
   }
 
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(this.baseUrl+`/vehicles`).then(response => {
+      this.setState({vehiclesToDisplay: response.data})
+      toast.success('yay')
+    }).catch(err => {
+      toast.error('oh no')
+    })
   }
 
   getPotentialBuyers() {
     // axios (GET)
     // setState with response -> buyersToDisplay
+    axios.get(this.baseUrl+`/buyers`).then(response =>
+    this.setState({buyersToDisplay: response.data}))
   }
 
   sellCar(id) {
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
+    axios.delete(`${this.baseUrl}/vehicles/${id}`).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err => {
+      toast.error('oh no')
+    })
   }
 
   filterByMake() {
     let make = this.selectedMake.value;
-
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${this.baseUrl}/vehicles`).then(response => {
+      console.log(response)
+    })
   }
 
   filterByColor() {
@@ -60,6 +77,11 @@ class App extends Component {
   updatePrice(priceChange, id) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
+    axios.put(`${this.baseUrl}/vehicles/${id}/${priceChange}`).then(response =>{
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err =>{
+      toast.error('oh no')
+    })
   }
 
   addCar() {
@@ -70,9 +92,13 @@ class App extends Component {
       year: this.year.value,
       price: this.price.value
     };
-
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+    axios.post(`${this.baseUrl}/vehicles`, newCar).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles})
+    }).catch(err => {
+      toast.error('oh no')
+    })
   }
 
   addBuyer() {
